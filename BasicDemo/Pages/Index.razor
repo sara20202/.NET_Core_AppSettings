@@ -1,0 +1,53 @@
+﻿@page "/"
+@inject IConfiguration _config
+@inject IOptions<EmailSettingsOptions> _emailSettingsOptions
+
+
+<h1>Hello, world!</h1>
+
+Welcome to your new app.
+
+<SurveyPrompt Title="How is Blazor working for you?" />
+<p>
+    MySetting value :@mySetting
+</p>
+<p>
+    MySubSetting value :@mySubSetting
+</p>
+<p>
+    MySubSetting value :@mySubSubSetting
+</p>
+<p>
+    MyConnectionString value :@ConnectionString
+</p>
+<p>
+    Enable Email: @emailSettings.EnableEmailSystem <br />
+    Email Timeout :@emailSettings.EmailTimeoutInSeconds<br />
+    Email Services:
+    @foreach(string server in emailSettings.EmailServices)
+            {
+                @server @:&nbsp;
+            }
+    <br />
+    Email Admin: @emailSettings.EmailAdmin.FirstName @emailSettings.EmailAdmin.LastName
+</p>
+
+@code{
+    string mySetting = "";
+    string mySubSetting =  "";
+    string mySubSubSetting = "";
+    string ConnectionString = "";
+    EmailSettingsOptions emailSettings = new EmailSettingsOptions();
+    protected override void OnInitialized()
+    {
+        mySetting = _config.GetValue<string>("MySetting");
+        mySubSetting = _config.GetValue<string>("MainSetting:SubSetting");
+        mySubSubSetting = _config.GetValue<string>("MainSetting:SubSection:SubSubSetting");
+        ConnectionString = _config.GetConnectionString("Default");
+
+        emailSettings = _emailSettingsOptions.Value;
+
+        //emailSettings = _config.GetSection("EmailSettings").Get<EmailSettingsOptions>();
+
+    }
+}
